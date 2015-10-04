@@ -1,6 +1,6 @@
 ﻿<# 
  .Synopsis
-  Returns folder object y given folder name and path.
+  Returns folder object by given folder name and path.
 
  .Description
   By given folder name and path determines whether folder exists. If not - creates new.

@@ -1,9 +1,66 @@
-﻿# shortcut taget - C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe "D:\chintsu\Works\scripts\Convert-for-Wallpapers\convert_for_wallpapers.ps1" -Width 720 -Height 1280 -Deviation 70 -SkipStrategy "Move" -FolderPath
+﻿<# 
+ .Synopsis
+  Using ImageMagick resizes images inside -FolderPath.
+  
+ .Description
+  Puts converted images inside "convert_result" subfolder.
+  Allows to specify width deviation (the scipt would convert an image with width bigger than -Width) if you need a scrollable wallpaper.
+  It does several checks:
+  If ImageMagick for some reason cannot determine an image size script moves (depends on -SkipStrategy value) the image to "skipped/invalidDimension" folder.
+  If an image smaller that "-Width x -Height" - to "skipped/small" folder.
+  If an image aspect ration (width/height) is smaller -Width/-Height - to "skipped/lesserRaio" folder.
+  If an image has bigger width deviation - to "skipped/biggerDeviation" folder.
 
+ .Parameter FolderPath
+  Path to a folder containing images to convert
+
+ .Parameter Width
+  Desired images width
+
+ .Parameter Height
+  Desired images height
+
+ .Parameter Deviation
+  Images width max allowed deviation (%) - converts images with width range [width, width + width % deviation].
+  Specify if you want to get a scrollable wallpaper (e.g. for smartphones)
+
+ .Parameter ShowProgress
+  Whether the show progress indicator should be shown.
+
+ .Parameter ImageMagickCovert
+  Path to ImageMagick convert.exe (including convert.exe). By default it's equal to "%ProgramW6432%\ImageMagick\convert.exe"
+
+ .Parameter SkipStrategy
+  Determines whether skipped images must be ignored ("Ignore"), copied ("Copy") or moved ("Move")
+
+ .Parameter MoveConverted
+  Determines whether original images that were converted must be moved to "converted" subfolder
+
+
+ .Example
+  # Converts images with the exact aspect ratio - 720x1280
+  convert_for_wallpapers.ps1 -FolderPath "C:\My Images" -Width 720 -Height 1280
+
+ .Example
+  # Converts images with variable width 720..1080x1280
+  convert_for_wallpapers.ps1 -FolderPath "C:\My Images" -Width 720 -Height 1280 -Deviation 50
+
+ .Example
+  # Converts images with exact the same aspect ratio - 720x1280 and move skipped images to a subfolder
+  convert_for_wallpapers.ps1 -FolderPath "C:\My Images" -Width 720 -Height 1280 -SkipStrategy "Move"
+
+ .Example
+  # Converts images with exact the same aspect ratio - 720x1280 and move original converted images to a subfolder
+  convert_for_wallpapers.ps1 -FolderPath "C:\My Images" -Width 720 -Height 1280 -MoveConverted 1
+
+  .Link
+  https://github.com/nikolay-borzov/Convert-for-Wallpapers
+#>
 [CmdletBinding()]
 Param
 (
   [Parameter(Mandatory=$True)]
+  [ValidateScript({Test-Path $_ -PathType 'Container'})]
   [string]$FolderPath,
 
   [Parameter(Mandatory=$True)]
@@ -25,19 +82,6 @@ Param
   [Bool]$MoveConverted = $False
 )
 
-#$DebugPreference = "Continue"
-
-#$ImageMagickCovert = "$env:ProgramW6432\ImageMagick\convert.exe"
-
-#$Height = 1280
-#$Width = 720
-
-#$Deviation = 50
-
-#$ShowProgress = $True
-
-#$FolderPath = "C:\tmp"
-
 # add functions
 . "$PSScriptRoot\GetDestination.ps1"
 . "$PSScriptRoot\GetAspectRatio.ps1"
@@ -56,7 +100,7 @@ Write-Debug "savePath: $savePath"
 if($SkipStrategy -ne "Ignore") 
 {
   $skippedPath = Join-Path $FolderPath "skipped"
-  $invalidDimensionPath = Get-Destination "invalidDimensio" $skippedPath
+  $invalidDimensionPath = Get-Destination "invalidDimension" $skippedPath
   $smallPath = Get-Destination "small" $skippedPath
   $lesserRaionPath = Get-Destination "lesserRaio" $skippedPath
   $biggerDeviationPath = Get-Destination "biggerDeviation" $skippedPath
@@ -72,7 +116,7 @@ $convertSquare = "{0}x{1}>" -f $maxSide, $maxSide
 
 Write-Debug "convertSquare: $convertSquare"
 
-# add -Recurse to get files from sub-folders
+# add -Recurse to get files from subfolders
 $fileNames = Get-ChildItem -Path $FolderPath\* -Include *.gif, *.jpg, *.png, *.jpeg | ?{ $_.PSIsContainer-eq $False } | % { $_.FullName }
 
 $i = 0
@@ -90,7 +134,7 @@ foreach($fullFileName in $fileNames)
   {
     $i++
     [int]$percentProcessed = ($i / $filesCount)  * 100
-    Write-Progress -Activity "Processing image ($i/$filesCount)" -Status "$percentProcessed%" -PercentComplete ($percentProcessed)
+    Write-Progress -Activity "Processing image ($i/$filesCount) at $FolderPath" -Status "$percentProcessed%" -PercentComplete ($percentProcessed)
   }
 
   Write-Debug "`n"
@@ -162,7 +206,8 @@ foreach($fullFileName in $fileNames)
   $convertedCount++
 }
 
-$message = "$convertedCount images converted"
+$message = "$FolderPath"
+$message += "`n$convertedCount images converted"
 $message += "`nSkipped:"
 $message += "`n$smallCount small images"
 $message += "`n$lesserRatioCount with lesser aspect ratio"
@@ -170,4 +215,5 @@ $message += "`n$biggerDeviationCount with bigger deviation`n"
 
 Write-Host $message
 
-Read-Host "Press enter key to exit"
+# disabled in favor of PAUSE inside "Convert for Wallpapers.bat"
+#Read-Host "Press enter key to exit"
