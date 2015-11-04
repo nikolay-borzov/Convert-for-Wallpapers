@@ -3,14 +3,14 @@ Powershell script that allows to convert images to use as wallpapers.
 
 ```
 NAME
-    D:\chintsu\Works\scripts\Convert-for-Wallpapers\convert_for_wallpapers.ps1
+    .\convert_for_wallpapers.ps1
     
 SYNOPSIS
     Using ImageMagick resizes images inside -FolderPath.
     
     
 SYNTAX
-    D:\chintsu\Works\scripts\Convert-for-Wallpapers\convert_for_wallpapers.ps1 [-FolderPath] <String> [-Width] <Int32> [-Height] <Int32> [[-Deviation] <Int32>] [[-ShowProgress] <Boolean>] [
+    .\convert_for_wallpapers.ps1 [-FolderPath] <String> [-Width] <Int32> [-Height] <Int32> [[-Deviation] <Int32>] [[-ShowProgress] <Boolean>] [
     [-ImageMagickCovert] <String>] [[-SkipStrategy] <String>] [[-MoveConverted] <Boolean>] [<CommonParameters>]
     
     
@@ -24,3 +24,4 @@ DESCRIPTION
     If an image has bigger width deviation - to "skipped/biggerDeviation" folder.
 ```
 
+You can create a shortcut for `Convert for Wallpapers.bat` and place it to SendTo menu

@@ -133,7 +133,7 @@ foreach($fullFileName in $fileNames)
   if($ShowProgress) 
   {
     $i++
-    [int]$percentProcessed = ($i / $filesCount)  * 100
+    [int]$percentProcessed = ($i / $filesCount) * 100
     Write-Progress -Activity "Processing image ($i/$filesCount) at $FolderPath" -Status "$percentProcessed%" -PercentComplete ($percentProcessed)
   }
 
@@ -214,6 +214,3 @@ $message += "`n$lesserRatioCount with lesser aspect ratio"
 $message += "`n$biggerDeviationCount with bigger deviation`n"
 
 Write-Host $message
-
-# disabled in favor of PAUSE inside "Convert for Wallpapers.bat"
-#Read-Host "Press enter key to exit"

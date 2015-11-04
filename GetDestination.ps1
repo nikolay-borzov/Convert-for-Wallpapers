@@ -18,24 +18,24 @@
 #>
 function Get-Destination 
 {
-    [CmdletBinding()]
-    Param
-    (
-        [Parameter(Mandatory=$True)]
-        [string]$Name,
+	[CmdletBinding()]
+	Param
+	(
+		[Parameter(Mandatory=$True)]
+		[string]$Name,
 
-        [Parameter(Mandatory=$True)]
-        [string]$ParentFolder
-    )
+		[Parameter(Mandatory=$True)]
+		[string]$ParentFolder
+	)
 
-    $path = Join-Path $ParentFolder $Name
-   
-    if(Test-Path -LiteralPath $path -PathType container) 
-    {
-        Get-Item -LiteralPath $path
-    } 
-    else 
-    {
-        New-Item -Path $ParentFolder -Name $Name -ItemType Directory
-    }
+	$path = Join-Path $ParentFolder $Name
+
+	if(Test-Path -LiteralPath $path -PathType container) 
+	{
+		Get-Item -LiteralPath $path
+	} 
+	else 
+	{
+		New-Item -Path $ParentFolder -Name $Name -ItemType Directory
+	}
 }
