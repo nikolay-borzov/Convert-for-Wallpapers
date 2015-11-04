@@ -1,14 +1,14 @@
 ﻿function Get-AspectRatio 
 {
-	[CmdletBinding()]
-	Param
-	(
-		[Parameter(Mandatory=$True)]
-		[string]$Width,
+  [CmdletBinding()]
+  Param
+  (
+    [Parameter(Mandatory=$True)]
+    [string]$Width,
 
-		[Parameter(Mandatory=$True)]
-		[int]$Height
-	)
+    [Parameter(Mandatory=$True)]
+    [int]$Height
+  )
 
-	return [decimal]($Width / $Height)
+  return [decimal]($Width / $Height)
 }
